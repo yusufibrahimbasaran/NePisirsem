@@ -18,20 +18,37 @@ export default function ShoppingListSection({
     setNewItemText('');
   };
 
-  const handleShareWhatsApp = () => {
-    if (shoppingList.length === 0) return;
-    
+  const generateShareText = () => {
     const unbought = shoppingList.filter(i => !i.completed).map(i => `▫️ ${i.name}`).join('\n');
     const bought = shoppingList.filter(i => i.completed).map(i => `✅ ${i.name}`).join('\n');
     
     let text = `🛒 *Ne Pişirsem? - Pazar & Market Listesi*\n\n`;
     if (unbought) text += `*Alınacaklar:*\n${unbought}\n\n`;
     if (bought) text += `*Alınanlar:*\n${bought}\n`;
+    text += `\n_Ne Pişirsem Mutfak Asistanı ile hazırlandı_ 🍳`;
+    return text;
+  };
 
-    navigator.clipboard.writeText(text).then(() => {
+  const handleShareWhatsAppDirect = () => {
+    if (shoppingList.length === 0) return;
+    const text = generateShareText();
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  };
+
+  const handleCopyList = () => {
+    if (shoppingList.length === 0) return;
+    const text = generateShareText();
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }).catch(() => {});
+    } else {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    }).catch(() => {});
+    }
   };
 
   const completedCount = shoppingList.filter(i => i.completed).length;
@@ -91,15 +108,33 @@ export default function ShoppingListSection({
           <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: 700 }}>
             Toplam {shoppingList.length} ürün ({completedCount} alındı)
           </span>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <button
-              onClick={handleShareWhatsApp}
+              onClick={handleShareWhatsAppDirect}
+              className="btn btn-sm"
+              style={{
+                background: '#25D366',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: '0.825rem',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <span>💬 WhatsApp ile Gönder</span>
+            </button>
+
+            <button
+              onClick={handleCopyList}
               className="btn btn-outline btn-sm"
               style={{ fontSize: '0.825rem', fontWeight: 700 }}
             >
               <Share2 size={14} />
-              <span>{copied ? 'Kopyalandı! ✔' : 'WhatsApp İçin Kopyala'}</span>
+              <span>{copied ? 'Kopyalandı! ✔' : 'Kopyala'}</span>
             </button>
+
             {completedCount > 0 && (
               <button
                 onClick={onClearCompleted}

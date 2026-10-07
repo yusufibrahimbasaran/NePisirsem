@@ -67,9 +67,10 @@ export function sortAndFilterRecipes(recipes, selectedIngredientIds, options = {
     category = 'all',
     maxTime = null,
     difficulty = 'all',
-    filterMode = 'all', // 'all', 'ready' (100%), 'almost' (<=2 missing)
+    filterMode = 'all', // 'all', 'ready', 'almost', 'custom', 'favorites'
     searchQuery = '',
     tag = null,
+    favorites = [],
   } = options;
 
   const results = recipes.map((recipe) => {
@@ -122,6 +123,9 @@ export function sortAndFilterRecipes(recipes, selectedIngredientIds, options = {
         return false;
       }
       if (filterMode === 'custom' && !recipe.isCustom) {
+        return false;
+      }
+      if (filterMode === 'favorites' && !favorites.includes(recipe.id)) {
         return false;
       }
 

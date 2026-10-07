@@ -6,7 +6,8 @@ import {
   CookingPot,
   Sparkles,
   BookOpen,
-  PlusCircle
+  PlusCircle,
+  Heart
 } from 'lucide-react';
 import RecipeCard from './RecipeCard';
 import { sortAndFilterRecipes } from '../utils/recipeMatcher';
@@ -20,7 +21,7 @@ export default function RecipeListSection({
   onAddMissingToShopping,
   onOpenCreateRecipe
 }) {
-  const [filterMode, setFilterMode] = useState('all'); // 'all', 'ready', 'almost', 'custom'
+  const [filterMode, setFilterMode] = useState('all'); // 'all', 'ready', 'almost', 'custom', 'favorites'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [maxTime, setMaxTime] = useState(null);
@@ -44,9 +45,10 @@ export default function RecipeListSection({
       filterMode,
       searchQuery,
       maxTime,
-      difficulty
+      difficulty,
+      favorites: favoriteIds
     });
-  }, [recipes, selectedIngredientIds, selectedCategory, filterMode, searchQuery, maxTime, difficulty]);
+  }, [recipes, selectedIngredientIds, selectedCategory, filterMode, searchQuery, maxTime, difficulty, favoriteIds]);
 
   const readyCount = useMemo(() => {
     return sortAndFilterRecipes(recipes, selectedIngredientIds, { filterMode: 'ready' }).length;
@@ -55,6 +57,8 @@ export default function RecipeListSection({
   const customCount = useMemo(() => {
     return recipes.filter(r => r.isCustom).length;
   }, [recipes]);
+
+  const favoriteCount = favoriteIds.length;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -111,7 +115,7 @@ export default function RecipeListSection({
           )}
         </div>
 
-        {/* Ready Status & Recipe Book Filter Tabs */}
+        {/* Ready Status & Recipe Book & Favorites Filter Tabs */}
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setFilterMode('all')}
@@ -160,6 +164,25 @@ export default function RecipeListSection({
             }}
           >
             1-2 Eksik Malzemeli
+          </button>
+
+          <button
+            onClick={() => setFilterMode('favorites')}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              background: filterMode === 'favorites' ? '#dc2626' : 'var(--bg-tertiary)',
+              color: filterMode === 'favorites' ? 'white' : 'var(--text-secondary)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <Heart size={15} fill={filterMode === 'favorites' ? 'white' : 'none'} color={filterMode === 'favorites' ? 'white' : '#dc2626'} />
+            <span>Favorilerim ({favoriteCount})</span>
           </button>
 
           <button

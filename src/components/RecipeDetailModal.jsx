@@ -42,15 +42,48 @@ export default function RecipeDetailModal({
   // Kitchen Timer State
   const [timerSeconds, setTimerSeconds] = useState((recipe.cookTime || 15) * 60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [timerFinished, setTimerFinished] = useState(false);
+
+  // Web Audio API Pleasant Alarm Chime
+  const playTimerChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      
+      // Play 3 warm bell notes (C5, E5, G5, C6)
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.18);
+        gain.gain.setValueAtTime(0.3, now + i * 0.18);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.18 + 0.9);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.18);
+        osc.stop(now + i * 0.18 + 0.9);
+      });
+    } catch (e) {
+      console.error('Audio chime error:', e);
+    }
+  };
 
   useEffect(() => {
     let interval = null;
     if (isTimerRunning && timerSeconds > 0) {
       interval = setInterval(() => {
-        setTimerSeconds((prev) => prev - 1);
+        setTimerSeconds((prev) => {
+          if (prev <= 1) {
+            setIsTimerRunning(false);
+            setTimerFinished(true);
+            playTimerChime();
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-    } else if (timerSeconds === 0) {
-      setIsTimerRunning(false);
     }
     return () => clearInterval(interval);
   }, [isTimerRunning, timerSeconds]);
@@ -59,6 +92,11 @@ export default function RecipeDetailModal({
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const adjustTimer = (deltaMinutes) => {
+    setTimerSeconds(prev => Math.max(10, prev + (deltaMinutes * 60)));
+    setTimerFinished(false);
   };
 
   const toggleStep = (index) => {
@@ -502,17 +540,92 @@ export default function RecipeDetailModal({
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {/* Kitchen Countdown Timer */}
-              <div className="kitchen-timer">
+              <div className={`kitchen-timer ${timerFinished ? 'timer-alarm' : ''}`} style={{
+                position: 'relative',
+                overflow: 'hidden',
+                background: timerFinished ? 'var(--warning-light)' : 'var(--bg-tertiary)',
+                border: timerFinished ? '2px solid var(--warning)' : '1.5px solid var(--border-color)',
+                padding: '1.25rem'
+              }}>
+                {timerFinished && (
+                  <div style={{
+                    background: 'var(--warning)',
+                    color: 'white',
+                    fontWeight: 800,
+                    fontSize: '0.9rem',
+                    padding: '0.5rem',
+                    borderRadius: 'var(--radius-md)',
+                    marginBottom: '0.75rem',
+                    textAlign: 'center',
+                    animation: 'pulse 1.5s infinite'
+                  }}>
+                    🔔 Zaman Doldu! Yemeğiniz pişti veya bir sonraki adıma geçebilirsiniz!
+                  </div>
+                )}
+
                 <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>
                   ⏱️ Mutfak Pişirme Sayacı
                 </div>
-                <div className="timer-digits">
+                <div className="timer-digits" style={{ color: timerFinished ? 'var(--warning-text)' : 'var(--text-primary)' }}>
                   {formatTimer(timerSeconds)}
                 </div>
+
+                {/* Quick Add / Subtract minutes */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '0.35rem', margin: '0.5rem 0' }}>
+                  <button
+                    type="button"
+                    onClick={() => adjustTimer(-1)}
+                    style={{
+                      padding: '2px 8px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    -1 dk
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => adjustTimer(1)}
+                    style={{
+                      padding: '2px 8px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    +1 dk
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => adjustTimer(5)}
+                    style={{
+                      padding: '2px 8px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      borderRadius: 'var(--radius-sm)',
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      color: 'var(--text-secondary)'
+                    }}
+                  >
+                    +5 dk
+                  </button>
+                </div>
+
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '0.65rem', marginTop: '0.5rem' }}>
                   <button
                     className={`btn ${isTimerRunning ? 'btn-secondary' : 'btn-primary'} btn-sm`}
-                    onClick={() => setIsTimerRunning(!isTimerRunning)}
+                    onClick={() => {
+                      setTimerFinished(false);
+                      setIsTimerRunning(!isTimerRunning);
+                    }}
                   >
                     {isTimerRunning ? <Pause size={16} /> : <Play size={16} />}
                     <span>{isTimerRunning ? 'Durdur' : 'Sayacı Başlat'}</span>
@@ -521,6 +634,7 @@ export default function RecipeDetailModal({
                     className="btn btn-secondary btn-sm"
                     onClick={() => {
                       setIsTimerRunning(false);
+                      setTimerFinished(false);
                       setTimerSeconds((recipe.cookTime || 15) * 60);
                     }}
                   >
