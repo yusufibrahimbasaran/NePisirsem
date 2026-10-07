@@ -14,6 +14,7 @@ import {
   CookingPot
 } from 'lucide-react';
 import { INGREDIENTS, INGREDIENT_CATEGORIES, PRESET_PANTRIES } from '../data/ingredientsData';
+import { matchesSearch } from '../utils/textUtils';
 
 export default function PantrySection({ 
   selectedIngredients, 
@@ -39,7 +40,7 @@ export default function PantrySection({
   const filteredIngredients = useMemo(() => {
     return INGREDIENTS.filter(item => {
       const matchCategory = activeCategory === 'all' || item.category === activeCategory;
-      const matchSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
+      const matchSearch = matchesSearch(item.name, searchQuery);
       return matchCategory && matchSearch;
     });
   }, [activeCategory, searchQuery]);

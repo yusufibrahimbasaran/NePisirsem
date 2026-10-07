@@ -1,3 +1,5 @@
+import { matchesSearch } from './textUtils';
+
 export function calculateRecipeMatch(recipe, selectedIngredientIds) {
   const selectedSet = new Set(selectedIngredientIds);
   
@@ -82,12 +84,14 @@ export function sortAndFilterRecipes(recipes, selectedIngredientIds, options = {
     .filter((recipe) => {
       // Search Query
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase().trim();
-        const matchTitle = recipe.title.toLowerCase().includes(q);
-        const matchDesc = recipe.description.toLowerCase().includes(q);
-        const matchCat = recipe.category.toLowerCase().includes(q);
-        const matchIng = recipe.requiredIngredients.some(i => i.id.toLowerCase().includes(q));
-        if (!matchTitle && !matchDesc && !matchCat && !matchIng) return false;
+        const matchTitle = matchesSearch(recipe.title, searchQuery);
+        const matchDesc = matchesSearch(recipe.description, searchQuery);
+        const matchCat = matchesSearch(recipe.category, searchQuery);
+        const matchCuisine = matchesSearch(recipe.cuisine, searchQuery);
+        const matchIng = recipe.requiredIngredients.some(i => matchesSearch(i.id, searchQuery) || matchesSearch(i.amount, searchQuery));
+        const matchOpt = (recipe.optionalIngredients || []).some(i => matchesSearch(i.id, searchQuery));
+        const matchTag = (recipe.tags || []).some(t => matchesSearch(t, searchQuery));
+        if (!matchTitle && !matchDesc && !matchCat && !matchCuisine && !matchIng && !matchOpt && !matchTag) return false;
       }
 
       // Category filter
