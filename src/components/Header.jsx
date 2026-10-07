@@ -19,8 +19,21 @@ export default function Header({
           style={{ cursor: 'pointer' }}
           onClick={() => setActiveTab('pantry')}
         >
-          <div className="brand-badge">
-            <ChefHat size={24} />
+          <div className="brand-badge-wrapper">
+            <img 
+              src="/logo.jpg" 
+              alt="Ne Pişirsem Logo" 
+              className="brand-logo-img"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                if (e.currentTarget.nextElementSibling) {
+                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                }
+              }}
+            />
+            <div className="brand-badge fallback-badge" style={{ display: 'none' }}>
+              <ChefHat size={22} />
+            </div>
           </div>
           <div>
             <div style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.3px', color: 'var(--text-primary)' }}>
