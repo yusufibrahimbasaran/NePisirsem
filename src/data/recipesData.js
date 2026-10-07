@@ -1502,5 +1502,272 @@ export const RECIPES = [
     ],
     tags: ['tatli', 'helva', 'geleneksel', '15-dakika'],
     tips: 'İrmiği kısık ateşte sürekli karıştırarak kavurmak helvanın homojen ve lezzetli olmasının sırrıdır.'
+  },
+  {
+    id: 'mozaik_pasta',
+    title: 'Nostaljik Pratik Mozaik Pasta',
+    category: 'Tatlı & İkram',
+    cuisine: 'Geleneksel Türk',
+    prepTime: 10,
+    cookTime: 0,
+    servings: 6,
+    difficulty: 'Kolay',
+    calories: 280,
+    imageEmoji: '🍫',
+    description: 'Fırın gerektirmeyen, petibör bisküvi, kakao ve tereyağının efsanevi buluşması. Dilimlendiğinde mozaik desenli lezzet şöleni.',
+    requiredIngredients: [
+      { id: 'biskuvi', amount: '2 paket petibör bisküvi' },
+      { id: 'tereyagi', amount: '3 yemek kaşığı (eritilmiş)' },
+      { id: 'sut', amount: '1 su bardağı' },
+      { id: 'kakao', amount: '3 yemek kaşığı' },
+      { id: 'seker', amount: 'Yarım su bardağı' }
+    ],
+    optionalIngredients: [
+      { id: 'ceviz', amount: '1 avuç iri dövülmüş' },
+      { id: 'findik_ezmesi', amount: '1 yemek kaşığı' },
+      { id: 'vanilya', amount: '1 paket vanilya' }
+    ],
+    spices: [],
+    instructions: [
+      'Geniş bir karıştırma kabında petibör bisküvileri elinizle çok ufalamadan iri parçalar halinde kırın.',
+      'Ayrı bir kapta eritilmiş ılık tereyağı, süt, kakao, toz şeker ve vanilyayı pürüzsüz olana kadar çırpın.',
+      'Sıvı çikolata sosunu kırılmış bisküvilerin üzerine dökün, cevizleri ekleyin ve bisküvileri ezmeden spatula ile nazikçe karıştırın.',
+      'Streç film veya yağlı kağıt serilmiş tezgaha harcı döküp piramit veya rulo şeklinde sıkıca sarın.',
+      'Derin dondurucuda en az 2 saat dinlendirin. Dilimleyerek soğuk servis yapın.'
+    ],
+    tags: ['tatli', 'cikolata', 'fırınsız', 'pratik', '15-dakika'],
+    tips: 'Bisküvileri fazla ufalamazsanız kesildiğinde mozaik deseni çok daha belirgin ve şık görünür.'
+  },
+  {
+    id: 'magnolia_tatlisi',
+    title: 'Kremamsı Muzlu & Çilekli Magnolia',
+    category: 'Tatlı & İkram',
+    cuisine: 'Dünya / Modern',
+    prepTime: 15,
+    cookTime: 10,
+    servings: 4,
+    difficulty: 'Kolay',
+    calories: 290,
+    imageEmoji: '🍨',
+    description: 'İpeksi vanilyalı muhallebi, çıtır bisküvi katmanları ve taze meyvelerle hazırlanan hafif kaşık tatlısı.',
+    requiredIngredients: [
+      { id: 'sut', amount: '1 litre' },
+      { id: 'seker', amount: '1 su bardağı' },
+      { id: 'un', amount: '2 yemek kaşığı' },
+      { id: 'nisasta', amount: '2 yemek kaşığı' },
+      { id: 'yumurta', amount: '1 adet sarısı' },
+      { id: 'biskuvi', amount: '1 paket (robottan geçirilmiş)' },
+      { id: 'muz', amount: '2 adet dilimlenmiş' }
+    ],
+    optionalIngredients: [
+      { id: 'cilek', amount: '8-10 adet dilimlenmiş' },
+      { id: 'krema', amount: '1 paket sıvı krema (veya labne)' },
+      { id: 'vanilya', amount: '1 paket vanilya' }
+    ],
+    spices: [],
+    instructions: [
+      'Tencereye süt, toz şeker, un, nişasta ve yumurta sarısını alıp çırpma teliyle iyice karıştırın.',
+      'Orta ateşte sürekli karıştırarak muhallebi kıvamı alıp göz göz kaynayana kadar pişirin.',
+      'Ocaktan alınca vanilyayı ve sıvı kremayı ekleyip mikserle 3-4 dakika pürüzsüz ve parlak olana kadar çırpın.',
+      'Kupların tabanına 2 kaşık çekilmiş bisküvi koyun. Kup kenarlarına muz ve çilek dilimlerini dizin.',
+      'Üzerine ılık kremayı dökün ve tekrar bisküvi-krema katları yaparak kupları doldurun. Buzdolabında soğutup servis yapın.'
+    ],
+    tags: ['tatli', 'sutlu-tatli', 'meyveli', 'hafif', 'yaz-tatlisi'],
+    tips: 'Muhallebiyi ocaktan aldıktan sonra krema ile mikserlemek pamuk gibi ipeksi dokuyu sağlar.'
+  },
+  {
+    id: 'anne_keki',
+    title: 'Puf Puf Sünger Anne Keki (Kakaolu & Cevizli)',
+    category: 'Tatlı & İkram',
+    cuisine: 'Geleneksel Türk',
+    prepTime: 10,
+    cookTime: 35,
+    servings: 8,
+    difficulty: 'Kolay',
+    calories: 250,
+    imageEmoji: '🥧',
+    description: 'Evi saran mis gibi kokusuyla anne eli değmiş yumuşacık, puf puf kabaran klasik çay keki.',
+    requiredIngredients: [
+      { id: 'yumurta', amount: '3 adet' },
+      { id: 'seker', amount: '1 su bardağı' },
+      { id: 'sut', amount: '1 su bardağı' },
+      { id: 'aycicek_yagi', amount: 'Yarım su bardağı' },
+      { id: 'un', amount: '2.5 su bardağı' },
+      { id: 'kabartma_tozu', amount: '1 paket' }
+    ],
+    optionalIngredients: [
+      { id: 'kakao', amount: '2 yemek kaşığı (ebruli desen için)' },
+      { id: 'ceviz', amount: 'Yarım su bardağı iri kırılmış' },
+      { id: 'vanilya', amount: '1 paket' },
+      { id: 'portakal', amount: '1 adet kabuğu rendesi' }
+    ],
+    spices: [
+      { id: 'tarcin', amount: 'Yarım çay kaşığı (isteğe bağlı)' }
+    ],
+    instructions: [
+      'Yumurta ve şekeri mikserle beyazlaşıp köpük köpük olana kadar en az 4-5 dakika çırpın.',
+      'Süt ve sıvı yağı ekleyip düşük devirde kısa süre karıştırın.',
+      'Un, kabartma tozu ve vanilyayı eleyerek karışıma ekleyin, spatula ile tek yönde hafifçe karıştırın.',
+      'Harcın üçte birini ayırıp kakao ve 2 kaşık sütle karıştırın.',
+      'Yağlanmış kek kalıbına önce sade harcı sonra kakaolu harcı döküp çatalla desen verin, üzerine ceviz serpin.',
+      'Önceden ısıtılmış 175°C fırında ilk 25 dakika kapağı açmadan yaklaşık 35-40 dakika pişirin (kürdan temiz çıkana kadar).'
+    ],
+    tags: ['kek', 'hamur-isi', 'tatli', 'cay-saati', 'firin'],
+    tips: 'Yumurtaların oda sıcaklığında olması ve unun elenmesi kekin sünger gibi kabarmasını garanti eder.'
+  },
+  {
+    id: 'pratik_pankek',
+    title: 'Altın Sarısı Puf Pankek',
+    category: 'Pratik & Kahvaltı',
+    cuisine: 'Dünya / Kahvaltı',
+    prepTime: 5,
+    cookTime: 10,
+    servings: 3,
+    difficulty: 'Kolay',
+    calories: 210,
+    imageEmoji: '🥞',
+    description: 'Sadece 5 dakikada çırpılan, tavada puf puf kabaran nefis kahvaltı pankekleri.',
+    requiredIngredients: [
+      { id: 'un', amount: '1.5 su bardağı' },
+      { id: 'sut', amount: '1 su bardağı' },
+      { id: 'yumurta', amount: '1 adet' },
+      { id: 'seker', amount: '2 yemek kaşığı' },
+      { id: 'kabartma_tozu', amount: '1 paket' },
+      { id: 'aycicek_yagi', amount: '2 yemek kaşığı (veya eritilmiş tereyağı)' }
+    ],
+    optionalIngredients: [
+      { id: 'bal', amount: 'Üzerine gezdirmek için' },
+      { id: 'findik_ezmesi', amount: 'Sürmek için' },
+      { id: 'muz', amount: '1 adet dilimlenmiş' },
+      { id: 'cilek', amount: '4-5 adet' },
+      { id: 'vanilya', amount: '1 paket' }
+    ],
+    spices: [],
+    instructions: [
+      'Geniş bir kasede yumurta ve şekeri çırpma teliyle çırpın.',
+      'Süt ve sıvı yağı ilave edin.',
+      'Un, kabartma tozu ve vanilyayı ekleyip pürüzsüz, akışkan ama koyuca bir boza kıvamı elde edin.',
+      'Hafifçe yağlanmış yapışmaz tavayı orta ateşte ısıtın.',
+      'Bir küçük kepçe harcı tavaya dökün. Üzerinde baloncuklar oluşup patlayınca spatula ile ters çevirip diğer yüzünü de 1 dakika altın rengi olana dek pişirin.',
+      'Muz dilimleri, bal veya çikolata ezmesi ile sıcak servis yapın.'
+    ],
+    tags: ['kahvalti', 'tatli', 'pratik', '15-dakika', 'cocuk-dostu'],
+    tips: 'Tavanın çok kızgın olmamasına dikkat edin, orta-kısık ateşte içini çekerek puf puf pişer.'
+  },
+  {
+    id: 'elmali_crumble',
+    title: 'Fırında Çıtır Tarçınlı Elmalı Crumble',
+    category: 'Tatlı & İkram',
+    cuisine: 'Dünya / Tatlı',
+    prepTime: 10,
+    cookTime: 25,
+    servings: 4,
+    difficulty: 'Kolay',
+    calories: 260,
+    imageEmoji: '🍏',
+    description: 'Karamelize tarçınlı sıcak elma dilimleri üzerinde çıtır tereyağlı kırıntı katmanı.',
+    requiredIngredients: [
+      { id: 'elma', amount: '3 adet soyulup küp doğranmış' },
+      { id: 'un', amount: '1 su bardağı' },
+      { id: 'tereyagi', amount: '3 yemek kaşığı soğuk küp tereyağı' },
+      { id: 'seker', amount: 'Yarım su bardağı' },
+      { id: 'tarcin', amount: '1 tatlı kaşığı' }
+    ],
+    optionalIngredients: [
+      { id: 'ceviz', amount: 'Yarım çay bardağı dövülmüş' },
+      { id: 'yulaf', amount: '3 yemek kaşığı' },
+      { id: 'limon', amount: 'Birkaç damla limon suyu' }
+    ],
+    spices: [
+      { id: 'tarcin', amount: '1 tatlı kaşığı' }
+    ],
+    instructions: [
+      'Doğranmış elmaları tarçın, 1 kaşık şeker ve birkaç damla limon suyuyla harmanlayıp fırın kabının tabanına yayın.',
+      'Ayrı bir kapta un, kalan şeker, yulaf ve soğuk küp tereyağını parmak uçlarınızla kum kıvamına gelene kadar ufalayın.',
+      'Cevizleri ekleyip bu çıtır kırıntı harcını elmaların üzerine bolca dökün.',
+      'Önceden ısıtılmış 180°C fırında üzeri altın sarısı ve çıtır olana kadar yaklaşık 25 dakika pişirin.',
+      'Ilık olarak dondurma veya krema eşliğinde servis yapın.'
+    ],
+    tags: ['tatli', 'meyveli', 'firin', 'kis-tatlisi', 'pratik'],
+    tips: 'Tereyağının soğuk olması kırıntıların hamurlaşmadan çıtır çıtır kalmasını sağlar.'
+  },
+  {
+    id: 'kahvaltilik_pisi',
+    title: 'Mayasız Çıtır Puf Pişi (Yağ Çekmeyen)',
+    category: 'Pratik & Kahvaltı',
+    cuisine: 'Geleneksel Türk',
+    prepTime: 10,
+    cookTime: 10,
+    servings: 4,
+    difficulty: 'Kolay',
+    calories: 270,
+    imageEmoji: '🥟',
+    description: 'Maya beklemeden 10 dakikada yoğrulan, tavada balon gibi kabaran yağ çekmeyen çıtır pişi.',
+    requiredIngredients: [
+      { id: 'un', amount: '2.5 su bardağı' },
+      { id: 'yogurt', amount: '1 su bardağı' },
+      { id: 'yumurta', amount: '1 adet' },
+      { id: 'kabartma_tozu', amount: '1 paket' },
+      { id: 'aycicek_yagi', amount: 'Kızartmak için bol sıvı yağ' }
+    ],
+    optionalIngredients: [
+      { id: 'beyaz_peynir', amount: 'İç harç için (veya yanında)' },
+      { id: 'siyah_zeytin', amount: 'Yanında servis için' },
+      { id: 'recel', amount: 'Yanında' }
+    ],
+    spices: [
+      { id: 'tuz', amount: '1 tatlı kaşığı' },
+      { id: 'corek_otu', amount: 'Hamurun içine 1 çay kaşığı (isteğe bağlı)' }
+    ],
+    instructions: [
+      'Geniş bir kapta yoğurt, yumurta, kabartma tozu ve tuzu karıştırın.',
+      'Unu azar azar ekleyerek ele yapışmayan yumuşak bir hamur yoğurun.',
+      'Tezgahı unlayıp hamuru merdane ile yarım santim kalınlığında açın ve bıçakla kare veya baklava dilimleri kesin.',
+      'Derin bir tavada sıvı yağı iyice kızdırın.',
+      'Hamur parçalarını kızgın yağa atın; anında kabaracaklardır. Her iki tarafını da 1-2 dakika altın sarısı olana kadar kızartın.',
+      'Havlu kağıt serili tabağa alıp peynir ve zeytin eşliğinde sıcak servis yapın.'
+    ],
+    tags: ['kahvalti', 'hamur-isi', 'pratik', '15-dakika', 'geleneksel'],
+    tips: 'Yağın iyice kızgın olması hamurun içine yağ çekmesini önler ve balon gibi kabartır.'
+  },
+  {
+    id: 'ege_zeytinli_kahvalti',
+    title: 'Ege Usulü Zeytinli & Baharatlı Kahvaltı Tabağı',
+    category: 'Pratik & Kahvaltı',
+    cuisine: 'Ege / Akdeniz',
+    prepTime: 5,
+    cookTime: 0,
+    servings: 2,
+    difficulty: 'Kolay',
+    calories: 190,
+    imageEmoji: '🫒',
+    description: 'Sızma zeytinyağı, kekik, pul biber ve limonla marine edilmiş zeytinler, taze peynir ve domates eşliğinde.',
+    requiredIngredients: [
+      { id: 'siyah_zeytin', amount: '1 çay bardağı' },
+      { id: 'yesil_zeytin', amount: '1 çay bardağı' },
+      { id: 'zeytinyagi', amount: '3 yemek kaşığı soğuk sıkım' },
+      { id: 'beyaz_peynir', amount: '100g dilimlenmiş' },
+      { id: 'domates', amount: '1 adet dilimlenmiş' },
+      { id: 'salatalik', amount: '1 adet' }
+    ],
+    optionalIngredients: [
+      { id: 'ceviz', amount: '3-4 adet' },
+      { id: 'recel', amount: '2 tatlı kaşığı' },
+      { id: 'kaymak', amount: '1 yemek kaşığı' },
+      { id: 'ekmek', amount: 'Taze çıtır ekmek' }
+    ],
+    spices: [
+      { id: 'kekik', amount: '1 tatlı kaşığı dağ kekiği' },
+      { id: 'pul_biber', amount: 'Yarım çay kaşığı' },
+      { id: 'corek_otu', amount: 'Peynirin üzerine serpmek için' }
+    ],
+    instructions: [
+      'Bir kasede siyah ve yeşil zeytinleri harmanlayın.',
+      'Üzerine sızma zeytinyağı, bol dağ kekiği ve pul biber gezdirip hafifçe karıştırın.',
+      'Servis tabağına zeytin karışımını, dilimlenmiş beyaz peyniri, domates ve salatalıkları şıkça yerleştirin.',
+      'Peynirin üzerine çörek otu serpin, yanında ceviz ve kızarmış ekmekle servis edin.'
+    ],
+    tags: ['kahvalti', 'pratik', 'vejetaryen', 'saglikli', '5-dakika'],
+    tips: 'Zeytinleri birkaç damla limon suyu ve zeytinyağında 5 dakika bekletmek lezzetini ikiye katlar.'
   }
 ];

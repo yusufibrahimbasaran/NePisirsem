@@ -11,7 +11,8 @@ import {
   Check, 
   ArrowRight,
   PackagePlus,
-  CookingPot
+  CookingPot,
+  Apple
 } from 'lucide-react';
 import { INGREDIENTS, INGREDIENT_CATEGORIES, PRESET_PANTRIES } from '../data/ingredientsData';
 import { matchesSearch } from '../utils/textUtils';
@@ -33,6 +34,7 @@ export default function PantrySection({
     meat: <Beef size={16} />,
     dairy: <Egg size={16} />,
     grains: <Wheat size={16} />,
+    fruits: <Apple size={16} />,
     pantry: <PackagePlus size={16} />,
     spices: <Flame size={16} />,
   };

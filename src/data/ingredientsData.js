@@ -2,8 +2,9 @@ export const INGREDIENT_CATEGORIES = [
   { id: 'all', name: 'Tümü', icon: 'Sparkles' },
   { id: 'vegetables', name: 'Sebze & Yeşillik', icon: 'Carrot' },
   { id: 'meat', name: 'Et, Tavuk & Balık', icon: 'Beef' },
-  { id: 'dairy', name: 'Süt, Peynir & Yumurta', icon: 'Egg' },
+  { id: 'dairy', name: 'Süt, Peynir & Şarküteri', icon: 'Egg' },
   { id: 'grains', name: 'Bakliyat & Tahıl & Hamur', icon: 'Wheat' },
+  { id: 'fruits', name: 'Meyve & Tatlı Malzemeleri', icon: 'Apple' },
   { id: 'pantry', name: 'Temel & Yağ & Sos', icon: 'Bottle' },
   { id: 'spices', name: 'Baharat & Çeşni', icon: 'Flame' },
 ];
@@ -45,6 +46,8 @@ export const INGREDIENTS = [
   { id: 'taze_fasulye', name: 'Taze Fasulye', category: 'vegetables', icon: '🫘', common: false },
   { id: 'enginar', name: 'Enginar', category: 'vegetables', icon: '🌱', common: false },
   { id: 'kereviz', name: 'Kereviz', category: 'vegetables', icon: '🥔', common: false },
+  { id: 'pancar', name: 'Kırmızı Pancar', category: 'vegetables', icon: '🟣', common: false },
+  { id: 'turp', name: 'Turp (Kırmızı / Beyaz)', category: 'vegetables', icon: '🌱', common: false },
   { id: 'avokado', name: 'Avokado', category: 'vegetables', icon: '🥑', common: false },
   { id: 'zencefil', name: 'Taze Zencefil', category: 'vegetables', icon: '🫚', common: false },
 
@@ -56,18 +59,23 @@ export const INGREDIENTS = [
   { id: 'biftek', name: 'Biftek / Antrikot', category: 'meat', icon: '🥩', common: false },
   { id: 'sucuk', name: 'Sucuk', category: 'meat', icon: '🥓', common: true },
   { id: 'sosis', name: 'Sosis', category: 'meat', icon: '🌭', common: false },
+  { id: 'salam', name: 'Salam / Hindi Füme / Jambon', category: 'meat', icon: '🥩', common: false },
   { id: 'pastirma', name: 'Pastırma', category: 'meat', icon: '🥓', common: false },
   { id: 'ton_baligi', name: 'Ton Balığı (Konserve)', category: 'meat', icon: '🐟', common: true },
   { id: 'somon', name: 'Somon / Somon Fileto', category: 'meat', icon: '🐟', common: false },
   { id: 'levrek', name: 'Levrek / Çipura / Beyaz Balık', category: 'meat', icon: '🐟', common: false },
   { id: 'karides', name: 'Karides', category: 'meat', icon: '🦐', common: false },
 
-  // --- SÜT, PEYNİR & YUMURTA ---
+  // --- SÜT, PEYNİR & ŞARKÜTERİ ---
   { id: 'yumurta', name: 'Yumurta', category: 'dairy', icon: '🥚', common: true },
   { id: 'sut', name: 'Süt', category: 'dairy', icon: '🥛', common: true },
   { id: 'yogurt', name: 'Yoğurt / Süzme Yoğurt', category: 'dairy', icon: '🥣', common: true },
   { id: 'kasar_peyniri', name: 'Kaşar Peyniri / Rendelenmiş Kaşar', category: 'dairy', icon: '🧀', common: true },
   { id: 'beyaz_peynir', name: 'Beyaz Peynir / Ezine / Süzme', category: 'dairy', icon: '🧀', common: true },
+  { id: 'siyah_zeytin', name: 'Siyah Zeytin', category: 'dairy', icon: '🫒', common: true },
+  { id: 'yesil_zeytin', name: 'Yeşil Zeytin / Kırma Zeytin', category: 'dairy', icon: '🫒', common: true },
+  { id: 'recel', name: 'Reçel (Çilek / Vişne / İncir)', category: 'dairy', icon: '🍯', common: true },
+  { id: 'kaymak', name: 'Süt Kaymağı', category: 'dairy', icon: '🧈', common: false },
   { id: 'tereyagi', name: 'Tereyağı / Margarin', category: 'dairy', icon: '🧈', common: true },
   { id: 'krema', name: 'Sıvı Krema', category: 'dairy', icon: '🥛', common: true },
   { id: 'lor_peyniri', name: 'Lor Peyniri / Çökelek', category: 'dairy', icon: '🧀', common: false },
@@ -98,6 +106,17 @@ export const INGREDIENTS = [
   { id: 'irmik', name: 'İrmik', category: 'grains', icon: '🌾', common: false },
   { id: 'kuskus', name: 'Kuskus', category: 'grains', icon: '🍲', common: false },
 
+  // --- MEYVE & TATLI MALZEMELERİ ---
+  { id: 'elma', name: 'Elma (Kırmızı / Yeşil)', category: 'fruits', icon: '🍎', common: true },
+  { id: 'muz', name: 'Muz', category: 'fruits', icon: '🍌', common: true },
+  { id: 'cilek', name: 'Çilek', category: 'fruits', icon: '🍓', common: false },
+  { id: 'portakal', name: 'Portakal / Mandalina', category: 'fruits', icon: '🍊', common: true },
+  { id: 'kuru_uzum', name: 'Kuru Üzüm / Kuru Kayısı / İncir', category: 'fruits', icon: '🍇', common: false },
+  { id: 'findik_ezmesi', name: 'Kakaolu Fındık Kreması (Nutella)', category: 'fruits', icon: '🍫', common: true },
+  { id: 'nisasta', name: 'Mısır / Buğday Nişastası', category: 'fruits', icon: '🥣', common: true },
+  { id: 'biskuvi', name: 'Petibör Bisküvi / Bebe Bisküvisi', category: 'fruits', icon: '🍪', common: true },
+  { id: 'vanilya', name: 'Vanilya / Şekerli Vanilin', category: 'fruits', icon: '✨', common: true },
+
   // --- TEMEL, YAĞ & SOS & KİLER ---
   { id: 'zeytinyagi', name: 'Zeytinyağı', category: 'pantry', icon: '🫒', common: true },
   { id: 'aycicek_yagi', name: 'Sıvı Yağ (Ayçiçek / Mısır)', category: 'pantry', icon: '🌻', common: true },
@@ -114,12 +133,14 @@ export const INGREDIENTS = [
   { id: 'ketcap', name: 'Ketçap', category: 'pantry', icon: '🍅', common: false },
   { id: 'bal', name: 'Bal / Pekmez', category: 'pantry', icon: '🍯', common: true },
   { id: 'tahin', name: 'Tahin', category: 'pantry', icon: '🥣', common: false },
-  { id: 'ceviz', name: 'Ceviz / Fındık / Badem', category: 'pantry', icon: '🥜', common: false },
-  { id: 'cam_fistigi', name: 'Dolmalık Çam Fıstığı / Kuş Üzümü', category: 'pantry', icon: '🍇', common: false },
+  { id: 'ceviz', name: 'Ceviz / Fındık / Badem', category: 'pantry', icon: '🥜', common: true },
+  { id: 'cam_fistigi', name: 'Dolmalık Çam Fıstığı', category: 'pantry', icon: '🥜', common: false },
   { id: 'susam', name: 'Susam / Çörek Otu', category: 'pantry', icon: '✨', common: false },
-  { id: 'kakao', name: 'Kakao / Damla Çikolata', category: 'pantry', icon: '🍫', common: false },
-  { id: 'kabartma_tozu', name: 'Kabartma Tozu / Vanilin', category: 'pantry', icon: '🧁', common: false },
+  { id: 'kakao', name: 'Kakao / Damla Çikolata', category: 'pantry', icon: '🍫', common: true },
+  { id: 'kabartma_tozu', name: 'Kabartma Tozu', category: 'pantry', icon: '🧁', common: true },
   { id: 'maya', name: 'Kuru / Yaş Maya', category: 'pantry', icon: '🍞', common: false },
+  { id: 'et_suyu', name: 'Et / Tavuk Bulyon / Kemik Suyu', category: 'pantry', icon: '🍲', common: true },
+  { id: 'soda', name: 'Maden Suyu (Soda)', category: 'pantry', icon: '🥤', common: false },
   { id: 'turshu', name: 'Kornişon / Karışık Turşu', category: 'pantry', icon: '🥒', common: false },
 
   // --- BAHARAT & ÇEŞNİ ---
@@ -132,10 +153,13 @@ export const INGREDIENTS = [
   { id: 'kimyon', name: 'Kimyon', category: 'spices', icon: '✨', common: true },
   { id: 'kori', name: 'Köri Baharatı', category: 'spices', icon: '🍛', common: false },
   { id: 'zerdecal', name: 'Zerdeçal', category: 'spices', icon: '✨', common: false },
-  { id: 'tarcin', name: 'Tarçın (Toz / Çubuk)', category: 'spices', icon: '🪵', common: false },
+  { id: 'tarcin', name: 'Tarçın (Toz / Çubuk)', category: 'spices', icon: '🪵', common: true },
   { id: 'sumak', name: 'Sumak', category: 'spices', icon: '✨', common: true },
+  { id: 'corek_otu', name: 'Çörek Otu', category: 'spices', icon: '✨', common: true },
+  { id: 'biberiye', name: 'Biberiye (Taze / Kuru)', category: 'spices', icon: '🌿', common: false },
+  { id: 'karanfil', name: 'Karanfil / Kakule', category: 'spices', icon: '🍂', common: false },
   { id: 'yenibahar', name: 'Yenibahar', category: 'spices', icon: '✨', common: false },
-  { id: 'kuru_feslegen', name: 'Kuru Fesleğen / Biberiye', category: 'spices', icon: '🌿', common: false },
+  { id: 'kuru_feslegen', name: 'Kuru Fesleğen', category: 'spices', icon: '🌿', common: false },
   { id: 'defne_yapragi', name: 'Defne Yaprağı', category: 'spices', icon: '🍃', common: false },
   { id: 'muskat', name: 'Muskat Cevizi Rendesi', category: 'spices', icon: '🌰', common: false }
 ];
