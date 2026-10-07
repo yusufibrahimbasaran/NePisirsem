@@ -7,6 +7,7 @@ import WheelOfFood from './components/WheelOfFood';
 import ChefAssistant from './components/ChefAssistant';
 import ShoppingListSection from './components/ShoppingListSection';
 import RecipeDetailModal from './components/RecipeDetailModal';
+import CreateRecipeModal from './components/CreateRecipeModal';
 import AuthModal from './components/AuthModal';
 import { RECIPES } from './data/recipesData';
 import { INGREDIENTS } from './data/ingredientsData';
@@ -25,6 +26,8 @@ export default function App() {
   });
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isCreateRecipeModalOpen, setIsCreateRecipeModalOpen] = useState(false);
+  const [editingRecipe, setEditingRecipe] = useState(null);
 
   // Active Tab: 'pantry', 'recipes', 'wheel', 'chef', 'shopping'
   const [activeTab, setActiveTab] = useState('pantry');
@@ -43,6 +46,59 @@ export default function App() {
       return currentUser.favorites;
     }
     return ['menemen', 'kremali_mantarli_makarna'];
+  });
+
+  // Custom Recipes State (Personal Recipe Book)
+  const [customRecipes, setCustomRecipes] = useState(() => {
+    if (currentUser && currentUser.customRecipes && currentUser.customRecipes.length > 0) {
+      return currentUser.customRecipes;
+    }
+    const saved = localStorage.getItem('np_custom_recipes');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return [
+      {
+        id: 'custom-anne-kofte',
+        title: 'Annemin Özel Baharatlı Köftesi',
+        category: 'Ana Yemekler',
+        cuisine: 'Anne Mutfağı',
+        prepTime: 15,
+        cookTime: 20,
+        servings: 4,
+        difficulty: 'Kolay',
+        calories: 340,
+        imageEmoji: '🧆',
+        description: 'Bizim evin vazgeçilmez akşam yemeği. Bol kimyon ve anne sevgisiyle yoğrulmuş özel tarif.',
+        isCustom: true,
+        author: 'Siz',
+        requiredIngredients: [
+          { id: 'kiyma', amount: '500g' },
+          { id: 'sogan', amount: '1 adet' },
+          { id: 'sarimsak', amount: '2 diş' },
+          { id: 'yumurta', amount: '1 adet' },
+          { id: 'ekmek', amount: '2 dilim' }
+        ],
+        optionalIngredients: [
+          { id: 'maydanoz', amount: 'Yarım demet' },
+          { id: 'zeytinyagi', amount: '2 yemek kaşığı' }
+        ],
+        spices: [
+          { id: 'kimyon', amount: '1 tatlı kaşığı' },
+          { id: 'karabiber', amount: '1 çay kaşığı' },
+          { id: 'pul_biber', amount: '1 çay kaşığı' },
+          { id: 'tuz', amount: '1 tatlı kaşığı' }
+        ],
+        instructions: [
+          'Soğan ve sarımsağı rendeleyip suyunu sıkın.',
+          'Kıyma, bayat ekmek içi, yumurta, soğan, sarımsak ve tüm baharatları geniş bir kasede 5-10 dakika yoğurun.',
+          'Ceviz büyüklüğünde parçalar alıp yassı köfteler şekillendirin.',
+          'Az yağlı tavada veya döküm ızgarada her iki tarafını 3-4 dakika nar gibi pişirin.'
+        ],
+        tags: ['ozel-tarif', 'anne-tarifi', 'kofte', 'protein'],
+        tips: 'Köfteleri şekillendirdikten sonra dolapta 15 dakika dinlendirirseniz çok daha sulu ve lezzetli kalır.'
+      }
+    ];
   });
 
   // Shopping List State
@@ -65,15 +121,21 @@ export default function App() {
     localStorage.setItem('np_theme', theme);
   }, [theme]);
 
+  // Persist custom recipes to localStorage
+  useEffect(() => {
+    localStorage.setItem('np_custom_recipes', JSON.stringify(customRecipes));
+  }, [customRecipes]);
+
   // Sync changes back to active user's persistent profile
-  const syncToActiveUser = (updatedPantry, updatedFavorites, updatedShopping) => {
+  const syncToActiveUser = (updatedPantry, updatedFavorites, updatedShopping, updatedCustomRecipes) => {
     if (!currentUser) return;
 
     const updatedUser = {
       ...currentUser,
       pantry: updatedPantry !== undefined ? updatedPantry : selectedIngredients,
       favorites: updatedFavorites !== undefined ? updatedFavorites : favoriteIds,
-      shoppingList: updatedShopping !== undefined ? updatedShopping : shoppingList
+      shoppingList: updatedShopping !== undefined ? updatedShopping : shoppingList,
+      customRecipes: updatedCustomRecipes !== undefined ? updatedCustomRecipes : customRecipes
     };
 
     setStoredCurrentUser(updatedUser);
@@ -95,6 +157,9 @@ export default function App() {
     setSelectedIngredients(user.pantry || []);
     setFavoriteIds(user.favorites || []);
     setShoppingList(user.shoppingList || []);
+    if (user.customRecipes && user.customRecipes.length > 0) {
+      setCustomRecipes(user.customRecipes);
+    }
   };
 
   const handleUserLogout = () => {
@@ -106,28 +171,64 @@ export default function App() {
   const toggleIngredient = (id) => {
     setSelectedIngredients(prev => {
       const next = prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id];
-      syncToActiveUser(next, undefined, undefined);
+      syncToActiveUser(next, undefined, undefined, undefined);
       return next;
     });
   };
 
   const clearIngredients = () => {
     setSelectedIngredients([]);
-    syncToActiveUser([], undefined, undefined);
+    syncToActiveUser([], undefined, undefined, undefined);
   };
 
   const applyPreset = (presetIds) => {
     setSelectedIngredients(presetIds);
-    syncToActiveUser(presetIds, undefined, undefined);
+    syncToActiveUser(presetIds, undefined, undefined, undefined);
   };
 
   // Favorite Handlers
   const toggleFavorite = (recipeId) => {
     setFavoriteIds(prev => {
       const next = prev.includes(recipeId) ? prev.filter(id => id !== recipeId) : [...prev, recipeId];
-      syncToActiveUser(undefined, next, undefined);
+      syncToActiveUser(undefined, next, undefined, undefined);
       return next;
     });
+  };
+
+  // Custom Recipe Handlers (Tarif Defterim)
+  const handleSaveCustomRecipe = (recipeData) => {
+    setCustomRecipes(prev => {
+      const existsIndex = prev.findIndex(r => r.id === recipeData.id);
+      let updated;
+      if (existsIndex >= 0) {
+        updated = [...prev];
+        updated[existsIndex] = recipeData;
+      } else {
+        updated = [recipeData, ...prev];
+      }
+      syncToActiveUser(undefined, undefined, undefined, updated);
+      return updated;
+    });
+
+    // Auto open created recipe
+    setSelectedRecipe(recipeData);
+    setEditingRecipe(null);
+  };
+
+  const handleDeleteCustomRecipe = (recipeId) => {
+    setCustomRecipes(prev => {
+      const updated = prev.filter(r => r.id !== recipeId);
+      syncToActiveUser(undefined, undefined, undefined, updated);
+      return updated;
+    });
+    if (selectedRecipe?.id === recipeId) {
+      setSelectedRecipe(null);
+    }
+  };
+
+  const handleEditCustomRecipe = (recipe) => {
+    setEditingRecipe(recipe);
+    setIsCreateRecipeModalOpen(true);
   };
 
   // Shopping List Handlers
@@ -139,7 +240,7 @@ export default function App() {
     };
     const next = [newItem, ...shoppingList];
     setShoppingList(next);
-    syncToActiveUser(undefined, undefined, next);
+    syncToActiveUser(undefined, undefined, next, undefined);
   };
 
   const addMissingIngredientsToShopping = (missingItems) => {
@@ -154,7 +255,7 @@ export default function App() {
 
     const next = [...newItems, ...shoppingList];
     setShoppingList(next);
-    syncToActiveUser(undefined, undefined, next);
+    syncToActiveUser(undefined, undefined, next, undefined);
     alert(`${newItems.length} eksik malzeme pazar listenize eklendi! 🛒`);
   };
 
@@ -166,28 +267,33 @@ export default function App() {
       return item;
     });
     setShoppingList(next);
-    syncToActiveUser(undefined, undefined, next);
+    syncToActiveUser(undefined, undefined, next, undefined);
   };
 
   const removeShoppingItem = (id) => {
     const next = shoppingList.filter(item => item.id !== id);
     setShoppingList(next);
-    syncToActiveUser(undefined, undefined, next);
+    syncToActiveUser(undefined, undefined, next, undefined);
   };
 
   const clearCompletedShopping = () => {
     const next = shoppingList.filter(item => !item.completed);
     setShoppingList(next);
-    syncToActiveUser(undefined, undefined, next);
+    syncToActiveUser(undefined, undefined, next, undefined);
   };
+
+  // Combine built-in and user custom recipes
+  const allRecipes = useMemo(() => {
+    return [...customRecipes, ...RECIPES];
+  }, [customRecipes]);
 
   // Calculate 100% cookable recipes count
   const cookableRecipes = useMemo(() => {
-    return RECIPES.filter(recipe => {
+    return allRecipes.filter(recipe => {
       const match = calculateRecipeMatch(recipe, selectedIngredients);
       return match.isFullyCookable;
     });
-  }, [selectedIngredients]);
+  }, [allRecipes, selectedIngredients]);
 
   return (
     <div className="app-container">
@@ -218,18 +324,22 @@ export default function App() {
 
         {activeTab === 'recipes' && (
           <RecipeListSection
-            recipes={RECIPES}
+            recipes={allRecipes}
             selectedIngredientIds={selectedIngredients}
             onSelectRecipe={(recipe) => setSelectedRecipe(recipe)}
             favoriteIds={favoriteIds}
             onToggleFavorite={toggleFavorite}
             onAddMissingToShopping={addMissingIngredientsToShopping}
+            onOpenCreateRecipe={() => {
+              setEditingRecipe(null);
+              setIsCreateRecipeModalOpen(true);
+            }}
           />
         )}
 
         {activeTab === 'wheel' && (
           <WheelOfFood
-            recipes={RECIPES}
+            recipes={allRecipes}
             cookableRecipes={cookableRecipes}
             onSelectRecipe={(recipe) => setSelectedRecipe(recipe)}
           />
@@ -270,8 +380,22 @@ export default function App() {
           isFavorite={favoriteIds.includes(selectedRecipe.id)}
           onToggleFavorite={toggleFavorite}
           onAddMissingToShopping={addMissingIngredientsToShopping}
+          onEditCustomRecipe={handleEditCustomRecipe}
+          onDeleteCustomRecipe={handleDeleteCustomRecipe}
         />
       )}
+
+      {/* Create / Edit Custom Recipe Modal */}
+      <CreateRecipeModal
+        isOpen={isCreateRecipeModalOpen}
+        onClose={() => {
+          setIsCreateRecipeModalOpen(false);
+          setEditingRecipe(null);
+        }}
+        onSaveRecipe={handleSaveCustomRecipe}
+        initialRecipe={editingRecipe}
+        currentUser={currentUser}
+      />
 
       {/* User Login & Profile Modal */}
       {isAuthModalOpen && (

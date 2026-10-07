@@ -30,6 +30,24 @@ export default function RecipeCard({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+          {recipe.isCustom && (
+            <div style={{
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              color: 'white',
+              fontSize: '0.75rem',
+              fontWeight: 800,
+              padding: '3px 8px',
+              borderRadius: 'var(--radius-full)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)'
+            }}>
+              <span>⭐</span>
+              <span>Sizin Tarifiniz</span>
+            </div>
+          )}
+
           {isFullyCookable ? (
             <div className="match-badge full">
               <CheckCircle2 size={14} />

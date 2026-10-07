@@ -4,7 +4,9 @@ import {
   CheckCircle2, 
   Clock, 
   CookingPot,
-  Sparkles
+  Sparkles,
+  BookOpen,
+  PlusCircle
 } from 'lucide-react';
 import RecipeCard from './RecipeCard';
 import { sortAndFilterRecipes } from '../utils/recipeMatcher';
@@ -15,9 +17,10 @@ export default function RecipeListSection({
   onSelectRecipe, 
   favoriteIds, 
   onToggleFavorite, 
-  onAddMissingToShopping 
+  onAddMissingToShopping,
+  onOpenCreateRecipe
 }) {
-  const [filterMode, setFilterMode] = useState('all'); // 'all', 'ready', 'almost'
+  const [filterMode, setFilterMode] = useState('all'); // 'all', 'ready', 'almost', 'custom'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [maxTime, setMaxTime] = useState(null);
@@ -49,6 +52,10 @@ export default function RecipeListSection({
     return sortAndFilterRecipes(recipes, selectedIngredientIds, { filterMode: 'ready' }).length;
   }, [recipes, selectedIngredientIds]);
 
+  const customCount = useMemo(() => {
+    return recipes.filter(r => r.isCustom).length;
+  }, [recipes]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {/* Header Controls */}
@@ -62,27 +69,49 @@ export default function RecipeListSection({
         padding: '1.15rem',
         boxShadow: 'var(--shadow-sm)'
       }}>
-        {/* Search Bar */}
-        <div style={{ position: 'relative' }}>
-          <Search size={20} color="var(--text-muted)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
-          <input
-            type="text"
-            placeholder="Yemek veya malzeme ara (örn: menemen, çorba, köfte, makarna...)"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '0.8rem 1rem 0.8rem 2.85rem',
-              background: 'var(--bg-tertiary)',
-              border: '1px solid var(--border-color)',
-              borderRadius: 'var(--radius-md)',
-              fontSize: '0.95rem',
-              color: 'var(--text-primary)'
-            }}
-          />
+        {/* Search Bar & Add Recipe Button Row */}
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search size={20} color="var(--text-muted)" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)' }} />
+            <input
+              type="text"
+              placeholder="Yemek veya malzeme ara (örn: menemen, köfte, ıspanak...)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.8rem 1rem 0.8rem 2.85rem',
+                background: 'var(--bg-tertiary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)',
+                fontSize: '0.95rem',
+                color: 'var(--text-primary)'
+              }}
+            />
+          </div>
+
+          {onOpenCreateRecipe && (
+            <button
+              onClick={onOpenCreateRecipe}
+              className="btn btn-primary"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '0.8rem 1.15rem',
+                fontWeight: 800,
+                fontSize: '0.9rem',
+                whiteSpace: 'nowrap',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.2)'
+              }}
+            >
+              <PlusCircle size={18} />
+              <span>Tarif Ekle</span>
+            </button>
+          )}
         </div>
 
-        {/* Ready Status Mode Tabs */}
+        {/* Ready Status & Recipe Book Filter Tabs */}
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setFilterMode('all')}
@@ -131,6 +160,25 @@ export default function RecipeListSection({
             }}
           >
             1-2 Eksik Malzemeli
+          </button>
+
+          <button
+            onClick={() => setFilterMode('custom')}
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.85rem',
+              fontWeight: 800,
+              background: filterMode === 'custom' ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'var(--bg-tertiary)',
+              color: filterMode === 'custom' ? 'white' : 'var(--text-secondary)',
+              border: '1px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px'
+            }}
+          >
+            <BookOpen size={16} />
+            <span>Tarif Defterim ({customCount})</span>
           </button>
         </div>
 

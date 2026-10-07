@@ -117,6 +117,9 @@ export function sortAndFilterRecipes(recipes, selectedIngredientIds, options = {
       if (filterMode === 'almost' && recipe.match.missingCount > 2) {
         return false;
       }
+      if (filterMode === 'custom' && !recipe.isCustom) {
+        return false;
+      }
 
       return true;
     })

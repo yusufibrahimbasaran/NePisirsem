@@ -14,7 +14,10 @@ import {
   CheckCircle2,
   Users,
   Plus,
-  Minus
+  Minus,
+  Edit3,
+  Trash2,
+  BookOpen
 } from 'lucide-react';
 import { INGREDIENTS } from '../data/ingredientsData';
 import { scaleAmount } from '../utils/portionScaler';
@@ -25,7 +28,9 @@ export default function RecipeDetailModal({
   onClose, 
   onToggleFavorite, 
   isFavorite, 
-  onAddMissingToShopping 
+  onAddMissingToShopping,
+  onEditCustomRecipe,
+  onDeleteCustomRecipe
 }) {
   const [activeTab, setActiveTab] = useState('ingredients'); // 'ingredients' or 'steps'
   const [completedSteps, setCompletedSteps] = useState([]);
@@ -113,27 +118,96 @@ export default function RecipeDetailModal({
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '2.75rem' }}>{recipe.imageEmoji || '🍲'}</span>
-            <div>
-              <div style={{ fontSize: '0.825rem', opacity: 0.9, fontWeight: 600 }}>
-                {recipe.category} • {recipe.cuisine}
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.825rem', opacity: 0.9, fontWeight: 600 }}>
+                  {recipe.category} • {recipe.cuisine}
+                </span>
+                {recipe.isCustom && (
+                  <span style={{
+                    background: 'rgba(245, 158, 11, 0.9)',
+                    color: 'white',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: 'var(--radius-full)'
+                  }}>
+                    ⭐ Sizin Tarif Defterinizden ({recipe.author || 'Siz'})
+                  </span>
+                )}
               </div>
-              <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'white' }}>{recipe.title}</h2>
+              <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'white', marginTop: '2px' }}>{recipe.title}</h2>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', marginTop: '0.85rem' }}>
-            <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Clock size={14} />
-              <span>{recipe.prepTime + recipe.cookTime} Dakika</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.65rem', marginTop: '0.85rem' }}>
+            <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+              <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Clock size={14} />
+                <span>{recipe.prepTime + recipe.cookTime} Dakika</span>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Users size={14} />
+                <span>{servings} Kişilik</span>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Flame size={14} />
+                <span>{Math.round(recipe.calories * (servings / baseServings))} kcal</span>
+              </div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Users size={14} />
-              <span>{servings} Kişilik (Ayarlanabilir)</span>
-            </div>
-            <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Flame size={14} />
-              <span>{Math.round(recipe.calories * (servings / baseServings))} kcal</span>
-            </div>
+
+            {recipe.isCustom && (
+              <div style={{ display: 'flex', gap: '0.45rem' }}>
+                {onEditCustomRecipe && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onEditCustomRecipe(recipe);
+                    }}
+                    style={{
+                      background: 'rgba(255,255,255,0.25)',
+                      border: 'none',
+                      color: 'white',
+                      padding: '5px 10px',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Edit3 size={13} /> Düzenle
+                  </button>
+                )}
+                {onDeleteCustomRecipe && (
+                  <button
+                    onClick={() => {
+                      if (window.confirm(`"${recipe.title}" tarifini defterinizden silmek istediğinize emin misiniz?`)) {
+                        onDeleteCustomRecipe(recipe.id);
+                        onClose();
+                      }
+                    }}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.4)',
+                      border: 'none',
+                      color: '#fee2e2',
+                      padding: '5px 10px',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Trash2 size={13} /> Sil
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
