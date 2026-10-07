@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import RecipeCard from './RecipeCard';
 import { sortAndFilterRecipes } from '../utils/recipeMatcher';
+import { DIETARY_FILTERS } from '../utils/nutritionCalculator';
 
 export default function RecipeListSection({ 
   recipes, 
@@ -23,6 +24,7 @@ export default function RecipeListSection({
 }) {
   const [filterMode, setFilterMode] = useState('all'); // 'all', 'ready', 'almost', 'custom', 'favorites'
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [dietaryFilter, setDietaryFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [maxTime, setMaxTime] = useState(null);
   const [difficulty, setDifficulty] = useState('all');
@@ -43,12 +45,13 @@ export default function RecipeListSection({
     return sortAndFilterRecipes(recipes, selectedIngredientIds, {
       category: selectedCategory,
       filterMode,
+      dietaryFilter,
       searchQuery,
       maxTime,
       difficulty,
       favorites: favoriteIds
     });
-  }, [recipes, selectedIngredientIds, selectedCategory, filterMode, searchQuery, maxTime, difficulty, favoriteIds]);
+  }, [recipes, selectedIngredientIds, selectedCategory, filterMode, dietaryFilter, searchQuery, maxTime, difficulty, favoriteIds]);
 
   const readyCount = useMemo(() => {
     return sortAndFilterRecipes(recipes, selectedIngredientIds, { filterMode: 'ready' }).length;
@@ -215,6 +218,33 @@ export default function RecipeListSection({
               style={{ fontSize: '0.85rem', padding: '0.45rem 0.85rem' }}
             >
               <span>{cat.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Dietary Fit Filters Bar */}
+        <div style={{ display: 'flex', gap: '0.4rem', overflowX: 'auto', padding: '0.2rem 0' }}>
+          {DIETARY_FILTERS.map(diet => (
+            <button
+              key={diet.id}
+              onClick={() => setDietaryFilter(diet.id)}
+              style={{
+                padding: '0.35rem 0.75rem',
+                borderRadius: 'var(--radius-full)',
+                fontSize: '0.775rem',
+                fontWeight: 700,
+                background: dietaryFilter === diet.id ? 'var(--text-primary)' : 'var(--bg-tertiary)',
+                color: dietaryFilter === diet.id ? 'var(--bg-primary)' : 'var(--text-secondary)',
+                border: '1px solid var(--border-color)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                whiteSpace: 'nowrap',
+                cursor: 'pointer'
+              }}
+            >
+              <span>{diet.icon}</span>
+              <span>{diet.name}</span>
             </button>
           ))}
         </div>

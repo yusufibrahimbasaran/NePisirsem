@@ -1,6 +1,7 @@
 import React from 'react';
 import { Clock, Flame, Utensils, Heart, CheckCircle2, AlertCircle, ShoppingBag } from 'lucide-react';
 import { INGREDIENTS } from '../data/ingredientsData';
+import { analyzeDietaryTags } from '../utils/nutritionCalculator';
 
 export default function RecipeCard({ 
   recipe, 
@@ -103,6 +104,30 @@ export default function RecipeCard({
             <Flame size={15} />
             <span>{recipe.calories} kcal</span>
           </div>
+        </div>
+
+        {/* Dietary & Macro Pills */}
+        <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', margin: '0.2rem 0' }}>
+          {analyzeDietaryTags(recipe).slice(0, 3).map(tag => (
+            <span
+              key={tag.id}
+              style={{
+                fontSize: '0.725rem',
+                fontWeight: 700,
+                padding: '2px 6px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'var(--bg-tertiary)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border-color)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '3px'
+              }}
+            >
+              <span>{tag.icon}</span>
+              <span>{tag.label}</span>
+            </span>
+          ))}
         </div>
 
         {missingCount > 0 && (

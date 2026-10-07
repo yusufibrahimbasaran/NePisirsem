@@ -382,6 +382,7 @@ export default function App() {
           onAddMissingToShopping={addMissingIngredientsToShopping}
           onEditCustomRecipe={handleEditCustomRecipe}
           onDeleteCustomRecipe={handleDeleteCustomRecipe}
+          currentUser={currentUser}
         />
       )}
 

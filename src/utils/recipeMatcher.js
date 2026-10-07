@@ -1,4 +1,5 @@
 import { matchesSearch } from './textUtils';
+import { analyzeDietaryTags } from './nutritionCalculator';
 
 export function calculateRecipeMatch(recipe, selectedIngredientIds) {
   const selectedSet = new Set(selectedIngredientIds);
@@ -68,6 +69,7 @@ export function sortAndFilterRecipes(recipes, selectedIngredientIds, options = {
     maxTime = null,
     difficulty = 'all',
     filterMode = 'all', // 'all', 'ready', 'almost', 'custom', 'favorites'
+    dietaryFilter = 'all', // 'all', 'vegetarian', 'vegan', 'gluten_free', 'dairy_free', 'high_protein', 'low_calorie'
     searchQuery = '',
     tag = null,
     favorites = [],
@@ -98,6 +100,14 @@ export function sortAndFilterRecipes(recipes, selectedIngredientIds, options = {
       // Category filter
       if (category !== 'all' && recipe.category !== category) {
         return false;
+      }
+
+      // Dietary filter
+      if (dietaryFilter && dietaryFilter !== 'all') {
+        const recipeDietTags = analyzeDietaryTags(recipe).map(t => t.id);
+        if (!recipeDietTags.includes(dietaryFilter)) {
+          return false;
+        }
       }
 
       // Tag filter

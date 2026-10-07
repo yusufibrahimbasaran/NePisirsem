@@ -21,6 +21,12 @@ import {
 } from 'lucide-react';
 import { INGREDIENTS } from '../data/ingredientsData';
 import { scaleAmount } from '../utils/portionScaler';
+import { 
+  calculateMacros, 
+  analyzeAllergens, 
+  analyzeDietaryTags, 
+  checkUserDietaryConflict 
+} from '../utils/nutritionCalculator';
 
 export default function RecipeDetailModal({ 
   recipe, 
@@ -30,7 +36,8 @@ export default function RecipeDetailModal({
   isFavorite, 
   onAddMissingToShopping,
   onEditCustomRecipe,
-  onDeleteCustomRecipe
+  onDeleteCustomRecipe,
+  currentUser
 }) {
   const [activeTab, setActiveTab] = useState('ingredients'); // 'ingredients' or 'steps'
   const [completedSteps, setCompletedSteps] = useState([]);
@@ -38,6 +45,12 @@ export default function RecipeDetailModal({
   // Dynamic Portion / Servings State
   const baseServings = recipe.servings || 2;
   const [servings, setServings] = useState(baseServings);
+
+  // Nutrition & Allergens calculation
+  const macros = calculateMacros(recipe, servings);
+  const allergens = analyzeAllergens(recipe);
+  const dietaryTags = analyzeDietaryTags(recipe);
+  const userConflicts = currentUser?.dietary ? checkUserDietaryConflict(recipe, currentUser.dietary) : null;
 
   // Kitchen Timer State
   const [timerSeconds, setTimerSeconds] = useState((recipe.cookTime || 15) * 60);
@@ -353,6 +366,29 @@ export default function RecipeDetailModal({
         <div style={{ padding: '1.25rem', overflowY: 'auto' }}>
           {activeTab === 'ingredients' ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* User Dietary Conflict Alert (if user has set dietary restrictions in profile) */}
+              {userConflicts && userConflicts.length > 0 && (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1.5px solid var(--danger)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.85rem 1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem'
+                }}>
+                  <div style={{ fontSize: '1.4rem' }}>⚠️</div>
+                  <div>
+                    <div style={{ fontWeight: 800, color: 'var(--danger)', fontSize: '0.85rem' }}>
+                      Profil Kısıtlama Uyarısı
+                    </div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', marginTop: '2px' }}>
+                      Profilinizdeki diyet tercihlerine göre bu tarif: <strong>{userConflicts.join(', ')}</strong>.
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Missing Ingredients Alert */}
               {missingItems.length > 0 && (
                 <div style={{
@@ -536,6 +572,122 @@ export default function RecipeDetailModal({
                   </div>
                 </div>
               )}
+
+              {/* Macro Nutrition Values Box */}
+              <div style={{
+                background: 'var(--bg-secondary)',
+                border: '1.5px solid var(--border-color)',
+                borderRadius: 'var(--radius-lg)',
+                padding: '1.15rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>📊</span>
+                    <span>Besin & Makro Değerleri</span>
+                  </div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                    Porsiyon başına: {macros.perServing.calories} kcal (Toplam {macros.totalScaled.calories} kcal)
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', textAlign: 'center' }}>
+                  <div style={{ background: 'var(--bg-tertiary)', padding: '0.65rem 0.4rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>🥩 Protein</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#3b82f6', marginTop: '2px' }}>{macros.perServing.protein}g</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Toplam {macros.totalScaled.protein}g</div>
+                  </div>
+
+                  <div style={{ background: 'var(--bg-tertiary)', padding: '0.65rem 0.4rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>🌾 Karb</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f59e0b', marginTop: '2px' }}>{macros.perServing.carbs}g</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Toplam {macros.totalScaled.carbs}g</div>
+                  </div>
+
+                  <div style={{ background: 'var(--bg-tertiary)', padding: '0.65rem 0.4rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>🥑 Yağ</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#10b981', marginTop: '2px' }}>{macros.perServing.fat}g</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Toplam {macros.totalScaled.fat}g</div>
+                  </div>
+
+                  <div style={{ background: 'var(--bg-tertiary)', padding: '0.65rem 0.4rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700 }}>🥦 Lif</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#059669', marginTop: '2px' }}>{macros.perServing.fiber}g</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Toplam {macros.totalScaled.fiber}g</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Allergen & Dietary Tags Box */}
+              <div style={{
+                background: 'var(--bg-tertiary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)',
+                padding: '0.95rem'
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
+                      🌱 Diyet Uygunluğu:
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                      {dietaryTags.map(tag => (
+                        <span
+                          key={tag.id}
+                          style={{
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            padding: '3px 8px',
+                            borderRadius: 'var(--radius-full)',
+                            background: 'var(--bg-secondary)',
+                            border: '1px solid var(--border-color)',
+                            color: 'var(--text-primary)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <span>{tag.icon}</span>
+                          <span>{tag.label}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '0.35rem' }}>
+                      ⚠️ Alerjen Uyarısı:
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                      {allergens.length > 0 ? (
+                        allergens.map(al => (
+                          <span
+                            key={al.id}
+                            style={{
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              padding: '3px 8px',
+                              borderRadius: 'var(--radius-full)',
+                              background: 'rgba(239, 68, 68, 0.1)',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
+                              color: 'var(--danger)',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}
+                          >
+                            <span>{al.icon}</span>
+                            <span>{al.name}</span>
+                          </span>
+                        ))
+                      ) : (
+                        <span style={{ fontSize: '0.8rem', color: 'var(--success)', fontWeight: 600 }}>
+                          ✅ Belirgin ana alerjen içermez.
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
