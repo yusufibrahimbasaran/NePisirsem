@@ -11,9 +11,13 @@ import {
   RotateCcw, 
   Lightbulb, 
   Heart,
-  CheckCircle2
+  CheckCircle2,
+  Users,
+  Plus,
+  Minus
 } from 'lucide-react';
 import { INGREDIENTS } from '../data/ingredientsData';
+import { scaleAmount } from '../utils/portionScaler';
 
 export default function RecipeDetailModal({ 
   recipe, 
@@ -26,6 +30,10 @@ export default function RecipeDetailModal({
   const [activeTab, setActiveTab] = useState('ingredients'); // 'ingredients' or 'steps'
   const [completedSteps, setCompletedSteps] = useState([]);
   
+  // Dynamic Portion / Servings State
+  const baseServings = recipe.servings || 2;
+  const [servings, setServings] = useState(baseServings);
+
   // Kitchen Timer State
   const [timerSeconds, setTimerSeconds] = useState((recipe.cookTime || 15) * 60);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -62,6 +70,15 @@ export default function RecipeDetailModal({
 
   const selectedSet = new Set(selectedIngredientIds);
   const missingItems = recipe.requiredIngredients.filter(req => !selectedSet.has(req.id));
+
+  // Handler to add missing ingredients with current scaled portions
+  const handleAddScaledMissing = () => {
+    const scaledMissing = missingItems.map(item => ({
+      id: item.id,
+      amount: scaleAmount(item.amount, baseServings, servings)
+    }));
+    onAddMissingToShopping(scaledMissing);
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -110,12 +127,77 @@ export default function RecipeDetailModal({
               <span>{recipe.prepTime + recipe.cookTime} Dakika</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Utensils size={14} />
-              <span>{recipe.servings} Kişilik</span>
+              <Users size={14} />
+              <span>{servings} Kişilik (Ayarlanabilir)</span>
             </div>
             <div style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 10px', borderRadius: '999px', fontSize: '0.825rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Flame size={14} />
-              <span>{recipe.calories} kcal</span>
+              <span>{Math.round(recipe.calories * (servings / baseServings))} kcal</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Dynamic Portion Calculator Bar */}
+        <div style={{
+          background: 'var(--bg-tertiary)',
+          borderBottom: '1.5px solid var(--border-color)',
+          padding: '0.75rem 1.25rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.65rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            <Users size={17} color="var(--primary)" />
+            <span style={{ fontSize: '0.875rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+              Kaç Kişilik Pişiriyorsunuz?
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Quick preset buttons */}
+            <div style={{ display: 'flex', gap: '0.3rem' }}>
+              {[1, 2, 4, 6].map(num => (
+                <button
+                  key={num}
+                  onClick={() => setServings(num)}
+                  style={{
+                    padding: '0.3rem 0.65rem',
+                    borderRadius: 'var(--radius-sm)',
+                    fontSize: '0.775rem',
+                    fontWeight: 800,
+                    background: servings === num ? 'var(--primary)' : 'var(--bg-secondary)',
+                    color: servings === num ? 'white' : 'var(--text-secondary)',
+                    border: '1px solid var(--border-color)'
+                  }}
+                >
+                  {num === 1 ? '1 (Tek)' : num === 4 ? '4 (Aile)' : `${num} Kişi`}
+                </button>
+              ))}
+            </div>
+
+            {/* Stepper buttons */}
+            <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)' }}>
+              <button
+                onClick={() => setServings(Math.max(1, servings - 1))}
+                style={{ padding: '0.3rem 0.5rem', color: 'var(--text-primary)' }}
+                disabled={servings <= 1}
+                aria-label="Porsiyon Azalt"
+              >
+                <Minus size={14} />
+              </button>
+              <span style={{ fontSize: '0.85rem', fontWeight: 800, padding: '0 0.4rem', minWidth: '22px', textAlign: 'center' }}>
+                {servings}
+              </span>
+              <button
+                onClick={() => setServings(Math.min(12, servings + 1))}
+                style={{ padding: '0.3rem 0.5rem', color: 'var(--text-primary)' }}
+                disabled={servings >= 12}
+                aria-label="Porsiyon Artır"
+              >
+                <Plus size={14} />
+              </button>
             </div>
           </div>
         </div>
@@ -131,7 +213,7 @@ export default function RecipeDetailModal({
             onClick={() => setActiveTab('ingredients')}
             style={{
               flex: 1,
-              padding: '0.9rem',
+              padding: '0.85rem',
               fontWeight: 800,
               fontSize: '0.925rem',
               color: activeTab === 'ingredients' ? 'var(--primary)' : 'var(--text-secondary)',
@@ -144,7 +226,7 @@ export default function RecipeDetailModal({
             onClick={() => setActiveTab('steps')}
             style={{
               flex: 1,
-              padding: '0.9rem',
+              padding: '0.85rem',
               fontWeight: 800,
               fontSize: '0.925rem',
               color: activeTab === 'steps' ? 'var(--primary)' : 'var(--text-secondary)',
@@ -176,13 +258,13 @@ export default function RecipeDetailModal({
                       {missingItems.length} Malzemeniz Eksik
                     </div>
                     <div style={{ fontSize: '0.775rem', color: 'var(--text-secondary)' }}>
-                      Eksikleri pazar listenize tek tıkla ekleyin.
+                      {servings} kişilik porsiyona göre hesaplanan miktarlarla pazar listenize ekleyin.
                     </div>
                   </div>
                   <button
                     className="btn btn-sm"
                     style={{ background: 'var(--warning)', color: 'white', fontWeight: 700 }}
-                    onClick={() => onAddMissingToShopping(missingItems)}
+                    onClick={handleAddScaledMissing}
                   >
                     <ShoppingBag size={14} />
                     <span>Pazara Ekle</span>
@@ -190,15 +272,22 @@ export default function RecipeDetailModal({
                 </div>
               )}
 
-              {/* Main Required Ingredients */}
+              {/* Main Required Ingredients (Scaled dynamically) */}
               <div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
-                  Ana Malzemeler
+                <div style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Gerekli Malzemeler</span>
+                  {servings !== baseServings && (
+                    <span style={{ fontSize: '0.775rem', color: 'var(--primary)', fontWeight: 700 }}>
+                      ⚡ {servings} kişiye göre uyarlandı
+                    </span>
+                  )}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                   {recipe.requiredIngredients.map(req => {
                     const info = getIngredientInfo(req.id);
                     const hasIt = selectedSet.has(req.id);
+                    const scaledAmountText = scaleAmount(req.amount, baseServings, servings);
+
                     return (
                       <div
                         key={req.id}
@@ -219,8 +308,12 @@ export default function RecipeDetailModal({
                           </span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                            {req.amount}
+                          <span style={{ 
+                            fontSize: '0.85rem', 
+                            color: servings !== baseServings ? 'var(--primary)' : 'var(--text-secondary)', 
+                            fontWeight: 700 
+                          }}>
+                            {scaledAmountText}
                           </span>
                           {hasIt ? (
                             <span style={{ color: 'var(--success-text)', fontWeight: 800, fontSize: '0.775rem', display: 'flex', alignItems: 'center', gap: '3px' }}>
@@ -238,6 +331,43 @@ export default function RecipeDetailModal({
                 </div>
               </div>
 
+              {/* Optional Ingredients (Scaled) */}
+              {recipe.optionalIngredients && recipe.optionalIngredients.length > 0 && (
+                <div>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
+                    İsteğe Bağlı Lezzet Katıcılar
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                    {recipe.optionalIngredients.map(opt => {
+                      const info = getIngredientInfo(opt.id);
+                      const scaledOptText = scaleAmount(opt.amount, baseServings, servings);
+                      return (
+                        <div
+                          key={opt.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0.65rem 0.95rem',
+                            borderRadius: 'var(--radius-md)',
+                            background: 'var(--bg-tertiary)',
+                            border: '1px solid var(--border-color)'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span style={{ fontSize: '1.2rem' }}>{info.icon}</span>
+                            <span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{info.name}</span>
+                          </div>
+                          <span style={{ fontSize: '0.825rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                            {scaledOptText}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Spices */}
               {recipe.spices && recipe.spices.length > 0 && (
                 <div>
@@ -247,6 +377,7 @@ export default function RecipeDetailModal({
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
                     {recipe.spices.map(sp => {
                       const info = getIngredientInfo(sp.id);
+                      const scaledSpiceText = scaleAmount(sp.amount, baseServings, servings);
                       return (
                         <div
                           key={sp.id}
@@ -263,7 +394,7 @@ export default function RecipeDetailModal({
                           }}
                         >
                           <span>{info.icon || '🧂'}</span>
-                          <span>{info.name} ({sp.amount})</span>
+                          <span>{info.name} ({scaledSpiceText})</span>
                         </div>
                       );
                     })}

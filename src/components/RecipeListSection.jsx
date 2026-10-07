@@ -30,8 +30,9 @@ export default function RecipeListSection({
     { id: 'Çorbalar', name: '🥣 Çorbalar' },
     { id: 'Makarna & Hamur', name: '🍝 Makarna & Hamur' },
     { id: 'Pilav & Yan Lezzet', name: '🍚 Pilav & Yan Lezzet' },
-    { id: 'Zeytinyağlı & Fit', name: '🥒 Zeytinyağlı & Fit' },
-    { id: 'Salata & Fit', name: '🥗 Salata' }
+    { id: 'Zeytinyağlı & Sebze', name: '🥒 Zeytinyağlı & Sebze' },
+    { id: 'Salata & Meze', name: '🥗 Salata & Meze' },
+    { id: 'Tatlı & İkram', name: '🍮 Tatlı & İkram' }
   ];
 
   const filteredRecipes = useMemo(() => {
