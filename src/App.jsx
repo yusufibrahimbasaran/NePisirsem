@@ -9,6 +9,7 @@ import ShoppingListSection from './components/ShoppingListSection';
 import RecipeDetailModal from './components/RecipeDetailModal';
 import CreateRecipeModal from './components/CreateRecipeModal';
 import AuthModal from './components/AuthModal';
+import InstallAppBanner from './components/InstallAppBanner';
 import { RECIPES } from './data/recipesData';
 import { INGREDIENTS } from './data/ingredientsData';
 import { calculateRecipeMatch } from './utils/recipeMatcher';
@@ -308,6 +309,9 @@ export default function App() {
         currentUser={currentUser}
         onOpenAuth={() => setIsAuthModalOpen(true)}
       />
+
+      {/* PWA Install Banner */}
+      <InstallAppBanner />
 
       {/* Main Content Body */}
       <main className="main-wrapper">

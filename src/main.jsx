@@ -7,4 +7,18 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
   </StrictMode>,
-)
+);
+
+// Register PWA Service Worker
+if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(
+      (registration) => {
+        console.log('PWA ServiceWorker registered successfully:', registration.scope);
+      },
+      (err) => {
+        console.log('PWA ServiceWorker registration failed:', err);
+      }
+    );
+  });
+}

@@ -787,3 +787,100 @@ input, select, textarea {
   border-top: 24px solid var(--primary);
   z-index: 10;
 }
+
+/* ==========================================================================
+   PWA Install Banner & Mobile App Enhancements
+   ========================================================================== */
+.install-pwa-banner {
+  background: linear-gradient(135deg, rgba(224, 83, 60, 0.08), rgba(245, 158, 11, 0.08));
+  border: 1.5px solid rgba(224, 83, 60, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1rem;
+  margin: 0.85rem auto 0 auto;
+  max-width: 1100px;
+  width: calc(100% - 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.install-pwa-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.install-pwa-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-install-pwa {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.45rem 0.95rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(224, 83, 60, 0.3);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-install-pwa:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-close-pwa {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 0.35rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-close-pwa:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Mobile Safe Areas (iPhone notch / home bar) */
+@supports (padding: max(0px)) {
+  .app-header {
+    padding-top: max(0.85rem, env(safe-area-inset-top));
+  }
+  .mobile-bottom-nav {
+    padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Mobile Tap Highlight reset */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
