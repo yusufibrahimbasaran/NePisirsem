@@ -3,7 +3,6 @@ import {
   X, 
   Clock, 
   Flame, 
-  Utensils, 
   Check, 
   ShoppingBag, 
   Play, 
@@ -16,8 +15,7 @@ import {
   Plus,
   Minus,
   Edit3,
-  Trash2,
-  BookOpen
+  Trash2
 } from 'lucide-react';
 import { INGREDIENTS } from '../data/ingredientsData';
 import { scaleAmount } from '../utils/portionScaler';

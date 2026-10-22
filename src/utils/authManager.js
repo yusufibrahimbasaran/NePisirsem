@@ -1,4 +1,18 @@
-// Kullanıcı Yönetimi & Kimlik Doğrulama Sistemi
+/**
+ * Ne Pişirsem? - İstemci Taraflı Profil Ayırma & Persona Yöneticisi
+ * 
+ * ⚠️ ÖNEMLİ MİMARİ AÇIKLAMA:
+ * Bu modül gerçek bir sunucu/backend kimlik doğrulama (JWT, OAuth, parola hash'leme veya oturum güvenliği)
+ * sistemi DEĞİLDİR. Tamamen istemci taraflı (Local-First / LocalStorage tabanlı) bir
+ * "Profil Ayırma ve Çoklu Persona Geçişi" mekanizmasıdır.
+ * 
+ * Amaç:
+ * Aynı tarayıcı veya mobil cihazı kullanan aile bireylerinin (örneğin "Ev Hanımı" ile "Üniversite Öğrencisi")
+ * dolap malzemelerini, favori tariflerini ve alışveriş listelerini birbirine karıştırmadan
+ * bağımsız profiller halinde saklayabilmesini sağlamaktır.
+ */
+
+import { getStorageItem, setStorageItem, removeStorageItem } from './storage';
 
 export const DEMO_USERS = [
   {
@@ -36,37 +50,37 @@ export const DEMO_USERS = [
 ];
 
 export function getStoredUsers() {
-  const data = localStorage.getItem('np_all_users');
-  if (data) {
-    try { return JSON.parse(data); } catch (e) {}
+  const users = getStorageItem('np_all_users', null);
+  if (users && Array.isArray(users) && users.length > 0) {
+    return users;
   }
-  // Initialize with demo users
-  localStorage.setItem('np_all_users', JSON.stringify(DEMO_USERS));
+  // Varsayılan demo kullanıcıları ile başlat
+  setStorageItem('np_all_users', DEMO_USERS);
   return DEMO_USERS;
 }
 
 export function saveStoredUsers(users) {
-  localStorage.setItem('np_all_users', JSON.stringify(users));
+  setStorageItem('np_all_users', users);
 }
 
 export function getCurrentUser() {
-  const data = localStorage.getItem('np_active_user');
-  if (data) {
-    try { return JSON.parse(data); } catch (e) {}
+  const user = getStorageItem('np_active_user', null);
+  if (user) {
+    return user;
   }
-  // Default to Ayşe Hanım initially
+  // Başlangıçta varsayılan olarak ilk profili seç
   const users = getStoredUsers();
   const defaultUser = users[0] || null;
   if (defaultUser) {
-    localStorage.setItem('np_active_user', JSON.stringify(defaultUser));
+    setStorageItem('np_active_user', defaultUser);
   }
   return defaultUser;
 }
 
 export function setCurrentUser(user) {
   if (user) {
-    localStorage.setItem('np_active_user', JSON.stringify(user));
+    setStorageItem('np_active_user', user);
   } else {
-    localStorage.removeItem('np_active_user');
+    removeStorageItem('np_active_user');
   }
 }

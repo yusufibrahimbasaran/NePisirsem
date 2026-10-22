@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, User, LogIn, UserPlus, LogOut, Check, Sparkles, ChefHat, GraduationCap, ShieldCheck, Heart, ShoppingBag, Refrigerator } from 'lucide-react';
+import { X, LogIn, UserPlus, LogOut, Heart, ShoppingBag, Refrigerator } from 'lucide-react';
 import { getStoredUsers, saveStoredUsers, DEMO_USERS } from '../utils/authManager';
 
 export default function AuthModal({ 

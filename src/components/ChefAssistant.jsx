@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Sparkles, Wand2, Clock, Flame, Utensils, CookingPot, Lightbulb } from 'lucide-react';
+import { Wand2, Clock, Flame, Utensils, CookingPot, Lightbulb } from 'lucide-react';
 import { generateChefSuggestion } from '../utils/aiChefAssistant';
 import { INGREDIENTS } from '../data/ingredientsData';
 
-export default function ChefAssistant({ selectedIngredientIds, onSelectRecipe }) {
+export default function ChefAssistant({ selectedIngredientIds, onSelectRecipe: _onSelectRecipe }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [customSuggestion, setCustomSuggestion] = useState(null);
 

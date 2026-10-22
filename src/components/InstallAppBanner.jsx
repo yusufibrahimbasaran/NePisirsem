@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Download, X, Smartphone, Sparkles, Check } from 'lucide-react';
+import { Download, X, Sparkles } from 'lucide-react';
+import { getStorageItem, setStorageItem } from '../utils/storage';
 
 export default function InstallAppBanner() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showBanner, setShowBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [installed, setInstalled] = useState(false);
+  const [installed, setInstalled] = useState(() => 
+    typeof window !== 'undefined' && Boolean(
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || 
+      window.navigator?.standalone
+    )
+  );
 
   useEffect(() => {
-    // Check if already in standalone mode (PWA installed)
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    if (isStandalone) {
-      setInstalled(true);
-      return;
-    }
+    if (installed) return;
 
     // Check if dismissed recently
-    const dismissed = localStorage.getItem('nepisirsem_install_dismissed');
+    const dismissed = getStorageItem('nepisirsem_install_dismissed', null);
     if (dismissed && Date.now() - parseInt(dismissed, 10) < 1000 * 60 * 60 * 24 * 3) {
       // Dismissed within last 3 days
       return;
@@ -49,7 +50,7 @@ export default function InstallAppBanner() {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
-  }, []);
+  }, [installed]);
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
@@ -65,7 +66,7 @@ export default function InstallAppBanner() {
 
   const handleDismiss = () => {
     setShowBanner(false);
-    localStorage.setItem('nepisirsem_install_dismissed', Date.now().toString());
+    setStorageItem('nepisirsem_install_dismissed', Date.now().toString());
   };
 
   if (!showBanner || installed) return null;

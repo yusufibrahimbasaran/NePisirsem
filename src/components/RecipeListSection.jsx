@@ -2,9 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { 
   Search, 
   CheckCircle2, 
-  Clock, 
   CookingPot,
-  Sparkles,
   BookOpen,
   PlusCircle,
   Heart
@@ -15,6 +13,7 @@ import { DIETARY_FILTERS } from '../utils/nutritionCalculator';
 
 export default function RecipeListSection({ 
   recipes, 
+  isLoading = false,
   selectedIngredientIds, 
   onSelectRecipe, 
   favoriteIds, 
@@ -301,7 +300,13 @@ export default function RecipeListSection({
       </div>
 
       {/* Recipes Grid */}
-      {filteredRecipes.length > 0 ? (
+      {isLoading && filteredRecipes.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem', color: 'var(--text-secondary)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🍳</div>
+          <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Tarif Kataloğu Yükleniyor...</div>
+          <p style={{ fontSize: '0.85rem' }}>97 özel lezzet hazırlanıyor.</p>
+        </div>
+      ) : filteredRecipes.length > 0 ? (
         <div className="recipe-grid">
           {filteredRecipes.map(recipe => (
             <RecipeCard

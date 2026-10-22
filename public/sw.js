@@ -15,7 +15,14 @@ self.addEventListener('install', (event) => {
       return cache.addAll(STATIC_ASSETS);
     })
   );
-  self.skipWaiting();
+  // Do NOT skipWaiting automatically; wait for user confirmation or tab reload
+});
+
+// Listen for update confirmation from the client application
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('activate', (event) => {

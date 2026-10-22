@@ -1,24 +1,27 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import PantrySection from './components/PantrySection';
 import RecipeListSection from './components/RecipeListSection';
-import WheelOfFood from './components/WheelOfFood';
 import ChefAssistant from './components/ChefAssistant';
 import ShoppingListSection from './components/ShoppingListSection';
 import RecipeDetailModal from './components/RecipeDetailModal';
-import CreateRecipeModal from './components/CreateRecipeModal';
 import AuthModal from './components/AuthModal';
 import InstallAppBanner from './components/InstallAppBanner';
-import { RECIPES } from './data/recipesData';
+import UpdateNotification from './components/UpdateNotification';
 import { INGREDIENTS } from './data/ingredientsData';
 import { calculateRecipeMatch } from './utils/recipeMatcher';
 import { getCurrentUser, setCurrentUser as setStoredCurrentUser, getStoredUsers, saveStoredUsers } from './utils/authManager';
+import { getStorageItem, setStorageItem } from './utils/storage';
+
+// Lazy loaded components & modals for code splitting & initial load performance
+const WheelOfFood = lazy(() => import('./components/WheelOfFood'));
+const CreateRecipeModal = lazy(() => import('./components/CreateRecipeModal'));
 
 export default function App() {
   // Theme State
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('np_theme') || 'light';
+    return getStorageItem('np_theme', 'light');
   });
 
   // Current User State
@@ -32,6 +35,22 @@ export default function App() {
 
   // Active Tab: 'pantry', 'recipes', 'wheel', 'chef', 'shopping'
   const [activeTab, setActiveTab] = useState('pantry');
+
+  // Recipes Catalog State (Lazy Loaded asynchronously for fast initial page load)
+  const [recipes, setRecipes] = useState([]);
+  const [isRecipesLoading, setIsRecipesLoading] = useState(true);
+
+  useEffect(() => {
+    import('./data/recipesData')
+      .then((mod) => {
+        setRecipes(mod.RECIPES);
+        setIsRecipesLoading(false);
+      })
+      .catch((err) => {
+        console.error('Tarif verisi yüklenirken hata oluştu:', err);
+        setIsRecipesLoading(false);
+      });
+  }, []);
 
   // Selected Ingredients State (Loaded from current user or defaults)
   const [selectedIngredients, setSelectedIngredients] = useState(() => {
@@ -54,9 +73,9 @@ export default function App() {
     if (currentUser && currentUser.customRecipes && currentUser.customRecipes.length > 0) {
       return currentUser.customRecipes;
     }
-    const saved = localStorage.getItem('np_custom_recipes');
-    if (saved) {
-      try { return JSON.parse(saved); } catch (e) {}
+    const saved = getStorageItem('np_custom_recipes', null);
+    if (saved && Array.isArray(saved) && saved.length > 0) {
+      return saved;
     }
     return [
       {
@@ -119,12 +138,12 @@ export default function App() {
   // Sync theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('np_theme', theme);
+    setStorageItem('np_theme', theme);
   }, [theme]);
 
-  // Persist custom recipes to localStorage
+  // Persist custom recipes to storage
   useEffect(() => {
-    localStorage.setItem('np_custom_recipes', JSON.stringify(customRecipes));
+    setStorageItem('np_custom_recipes', customRecipes);
   }, [customRecipes]);
 
   // Sync changes back to active user's persistent profile
@@ -285,8 +304,8 @@ export default function App() {
 
   // Combine built-in and user custom recipes
   const allRecipes = useMemo(() => {
-    return [...customRecipes, ...RECIPES];
-  }, [customRecipes]);
+    return [...customRecipes, ...recipes];
+  }, [customRecipes, recipes]);
 
   // Calculate 100% cookable recipes count
   const cookableRecipes = useMemo(() => {
@@ -329,6 +348,7 @@ export default function App() {
         {activeTab === 'recipes' && (
           <RecipeListSection
             recipes={allRecipes}
+            isLoading={isRecipesLoading}
             selectedIngredientIds={selectedIngredients}
             onSelectRecipe={(recipe) => setSelectedRecipe(recipe)}
             favoriteIds={favoriteIds}
@@ -342,11 +362,18 @@ export default function App() {
         )}
 
         {activeTab === 'wheel' && (
-          <WheelOfFood
-            recipes={allRecipes}
-            cookableRecipes={cookableRecipes}
-            onSelectRecipe={(recipe) => setSelectedRecipe(recipe)}
-          />
+          <Suspense fallback={
+            <div style={{ textAlign: 'center', padding: '3.5rem 1rem', color: 'var(--text-secondary)' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🎡</div>
+              <div style={{ fontWeight: 600 }}>Yemek Çarkı Hazırlanıyor...</div>
+            </div>
+          }>
+            <WheelOfFood
+              recipes={allRecipes}
+              cookableRecipes={cookableRecipes}
+              onSelectRecipe={(recipe) => setSelectedRecipe(recipe)}
+            />
+          </Suspense>
         )}
 
         {activeTab === 'chef' && (
@@ -390,17 +417,19 @@ export default function App() {
         />
       )}
 
-      {/* Create / Edit Custom Recipe Modal */}
-      <CreateRecipeModal
-        isOpen={isCreateRecipeModalOpen}
-        onClose={() => {
-          setIsCreateRecipeModalOpen(false);
-          setEditingRecipe(null);
-        }}
-        onSaveRecipe={handleSaveCustomRecipe}
-        initialRecipe={editingRecipe}
-        currentUser={currentUser}
-      />
+      {/* Create / Edit Custom Recipe Modal (Lazy Loaded) */}
+      <Suspense fallback={null}>
+        <CreateRecipeModal
+          isOpen={isCreateRecipeModalOpen}
+          onClose={() => {
+            setIsCreateRecipeModalOpen(false);
+            setEditingRecipe(null);
+          }}
+          onSaveRecipe={handleSaveCustomRecipe}
+          initialRecipe={editingRecipe}
+          currentUser={currentUser}
+        />
+      </Suspense>
 
       {/* User Login & Profile Modal */}
       {isAuthModalOpen && (
@@ -414,6 +443,9 @@ export default function App() {
           shoppingCount={shoppingList.filter(i => !i.completed).length}
         />
       )}
+
+      {/* PWA Update Notification Banner */}
+      <UpdateNotification />
     </div>
   );
 }

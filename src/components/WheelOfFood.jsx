@@ -34,7 +34,7 @@ export default function WheelOfFood({ recipes, cookableRecipes, onSelectRecipe }
           spread: 70,
           origin: { y: 0.6 }
         });
-      } catch (err) {}
+      } catch { /* ignore */ }
     }, 3000);
   };
 

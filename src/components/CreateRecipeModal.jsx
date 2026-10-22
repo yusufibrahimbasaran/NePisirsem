@@ -3,13 +3,10 @@ import {
   X, 
   Plus, 
   Trash2, 
-  Sparkles, 
-  ChefHat, 
   Clock, 
   Utensils, 
   Flame, 
   Users, 
-  BookOpen,
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
@@ -22,8 +19,6 @@ export default function CreateRecipeModal({
   initialRecipe = null,
   currentUser 
 }) {
-  if (!isOpen) return null;
-
   const isEditing = Boolean(initialRecipe);
 
   const [title, setTitle] = useState(initialRecipe?.title || '');
@@ -70,6 +65,37 @@ export default function CreateRecipeModal({
 
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    if (initialRecipe) {
+      setTitle(initialRecipe.title || '');
+      setCategory(initialRecipe.category || 'Ana Yemekler');
+      setCuisine(initialRecipe.cuisine || 'Ev Yapımı / Anne Mutfağı');
+      setPrepTime(initialRecipe.prepTime || 15);
+      setCookTime(initialRecipe.cookTime || 20);
+      setServings(initialRecipe.servings || 4);
+      setDifficulty(initialRecipe.difficulty || 'Kolay');
+      setCalories(initialRecipe.calories || 320);
+      setImageEmoji(initialRecipe.imageEmoji || '🍲');
+      setDescription(initialRecipe.description || '');
+      setTips(initialRecipe.tips || '');
+      setRequiredIngredients(initialRecipe.requiredIngredients || [
+        { id: 'sogan', amount: '1 adet' },
+        { id: 'zeytinyagi', amount: '2 yemek kaşığı' }
+      ]);
+      setOptionalIngredients(initialRecipe.optionalIngredients || []);
+      setSpices(initialRecipe.spices || [
+        { id: 'tuz', amount: '1 tatlı kaşığı' },
+        { id: 'karabiber', amount: '1 çay kaşığı' }
+      ]);
+      setInstructions(initialRecipe.instructions || [
+        'Malzemeleri yıkayıp doğrayarak hazırlayın.',
+        'Tencere veya tavada pişirme aşamalarını sırayla uygulayın.',
+        'Sıcak olarak servis yapın.'
+      ]);
+      setError('');
+    }
+  }, [initialRecipe]);
+
   const emojiOptions = ['🍲', '🍳', '🥩', '🍗', '🐟', '🍝', '🍚', '🥗', '🍕', '🥟', '🥦', '🥕', '🍆', '🍮', '🥞', '🥣', '🥪', '🌯', '🧁', '✨'];
 
   const categories = [
@@ -96,21 +122,6 @@ export default function CreateRecipeModal({
 
   const handleRemoveRequired = (index) => {
     setRequiredIngredients(requiredIngredients.filter((_, i) => i !== index));
-  };
-
-  // Optional Ingredient Handlers
-  const handleAddOptional = () => {
-    setOptionalIngredients([...optionalIngredients, { id: 'kasar_peyniri', amount: '50g' }]);
-  };
-
-  const handleUpdateOptional = (index, field, value) => {
-    const updated = [...optionalIngredients];
-    updated[index][field] = value;
-    setOptionalIngredients(updated);
-  };
-
-  const handleRemoveOptional = (index) => {
-    setOptionalIngredients(optionalIngredients.filter((_, i) => i !== index));
   };
 
   // Spices Handlers
@@ -187,8 +198,28 @@ export default function CreateRecipeModal({
     };
 
     onSaveRecipe(recipeData);
+    setTitle('');
+    setDescription('');
+    setTips('');
+    setRequiredIngredients([
+      { id: 'sogan', amount: '1 adet' },
+      { id: 'zeytinyagi', amount: '2 yemek kaşığı' }
+    ]);
+    setOptionalIngredients([]);
+    setSpices([
+      { id: 'tuz', amount: '1 tatlı kaşığı' },
+      { id: 'karabiber', amount: '1 çay kaşığı' }
+    ]);
+    setInstructions([
+      'Malzemeleri yıkayıp doğrayarak hazırlayın.',
+      'Tencere veya tavada pişirme aşamalarını sırayla uygulayın.',
+      'Sıcak olarak servis yapın.'
+    ]);
+    setError('');
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1100 }}>
